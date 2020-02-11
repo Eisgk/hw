@@ -1,20 +1,23 @@
+// index.js
+
 let e = false;
-let m = 0;
-let f = 0;
-let o = 0;
-let count = 0;
+
+let M=0;
+let F=0;
+let O=0;
 
 let firebaseConfig = {
-    apiKey: "AIzaSyDTE-zKzPgQG_OYIvEF0-vJhOKNK--a8FU",
+    apiKey: "AIzaSyCpIlcmNOoB3yuGF4D70wPebYiGPgbK_VA",
     authDomain: "localhost",
-    projectId: "lab5-8d6d0",
-    
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-let db = firebase.firestore();
+    projectId: "test-c35f1",
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  let db = firebase.firestore();
+console.log('Hi');
 
-$('save').click(()=> {
+
+$('#save').click(()=> {
     e = false
     let first = document.getElementById("first").value;
     let last = document.getElementById("last").value;
@@ -25,7 +28,7 @@ $('save').click(()=> {
     //checked validation
 
 
-    if(!(first.match('^[a-zA-Z]{1,16}$')) || first == "") {
+    if(!(first.match('^[a-zA-Z]{3,16}$')) || first == "") {
         console.log('F');
         e = true;
         document.querySelector('#fe').textContent = "Please enter a valid First name."
@@ -34,7 +37,7 @@ $('save').click(()=> {
 
     }
 
-    if(!(last.match('^[a-zA-Z]{1,16}$')) || last == "") {
+    if(!(last.match('^[a-zA-Z]{3,16}$')) || last == "") {
         console.log('L');
         e = true;
         document.querySelector('#le').textContent = "Please enter a valid Last name."
@@ -68,14 +71,14 @@ $('save').click(()=> {
         document.querySelector('#se').textContent = ""
 
 
-    db.collection("users")
+    db.collection("user")
     .add({
 
         Name: first + " " + last,
         Gender: sex,
         Email: email,
         Detail: detail,
-        
+
     })
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
@@ -100,11 +103,12 @@ $('save').click(()=> {
     
 })
 
-db.collection('users').orderBy("Name").onSnapshot(doc =>{
-    let table = $('.ccc')[0]
-    
+db.collection('user').orderBy("Name").onSnapshot(doc =>{
+    let table = $('tbody')[0]
     // document.querySelectorAll("tbody tr").forEach(item => item.remove())
     $("tbody tr").remove()
+    // gpa = 0
+    // credit = 0
     doc.forEach(item => { 
         let row = table.insertRow(-1)
         let firstCell = row.insertCell(0)
@@ -113,35 +117,38 @@ db.collection('users').orderBy("Name").onSnapshot(doc =>{
         let str = String(item.data().Email)
         let mail = ""
         
-        for(i=0;i<str.length;i++){
-            if(i==0|| str[i]=='@'|| str[i]=='.'){
+        for (let i = 0; i < str.length; i++) {
+            if (i==0||str[i]=='@'||str[i]=='.') {
                 mail += str[i]
-            }else mail +='x'
+            } else {
+                mail +='x'
+            }
+            
         }
         firstCell.textContent = item.data().Name
         if(item.data().Gender == 1){
-            secoundCell.textContent = "male";
-            m++;
-            count++;
+            secoundCell.textContent = "Male";
+            M++;
         }else if(item.data().Gender == 2){
-            secoundCell.textContent = "female";
-            f++;
-            count++;
+            secoundCell.textContent = "Female";
+            F++;
         }else if(item.data().Gender == 3){
             secoundCell.textContent = "Other";
-            o++;
-            count++;
+            O++;
         }
         thirdCell.textContent = mail
 
+        console.log(M)
+
+        //chart
+
         let options = {
             title: {
-                text: "Users Gender "
+                text: "User Gender Ratio in Website"
             },
             subtitles: [{
                 text: "As of February, 2020"
             }],
-            
             animationEnabled: true,
             data: [{
                 type: "pie",
@@ -150,17 +157,22 @@ db.collection('users').orderBy("Name").onSnapshot(doc =>{
                 showInLegend: "true",
                 legendText: "{label}",
                 indexLabelFontSize: 16,
-                indexLabel: "{label} - {y}%",
+                indexLabel: "{label}  - {y}",
                 dataPoints: [
-                    { y: (m/count)*100, label: "Male" },
-                    { y: (f/count)*100, label: "Female" },
-                    { y: (o/count)*100, label: "Other" },
-                   
-                   
-                ]  
+                    { y: M, label: "Male" },
+                    { y: F, label: "Female" },
+                    { y: O, label: "Others" }
+                ]
             }]
         };
         $("#chartContainer").CanvasJSChart(options);
+        
+
+  
     })
-    //$('.textchange').text(secoundCell)
+    M = 0;
+    F = 0;
+    O = 0;
+
 })
+
