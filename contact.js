@@ -1,24 +1,20 @@
 let e = false;
-let m = 0.0
-let f = 0.0
-let o = 0.0
-let count = 0.0
+let m = 0;
+let f = 0;
+let o = 0;
+let count = 0;
 
 let firebaseConfig = {
     apiKey: "AIzaSyDTE-zKzPgQG_OYIvEF0-vJhOKNK--a8FU",
     authDomain: "localhost",
-    databaseURL: "https://lab5-8d6d0.firebaseio.com",
     projectId: "lab5-8d6d0",
-    storageBucket: "lab5-8d6d0.appspot.com",
-    messagingSenderId: "835377672601",
-    appId: "1:835377672601:web:13a57b9ccce610a3fde308",
-    measurementId: "G-VSE6KS82KN"
+    
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 let db = firebase.firestore();
 
-$('#save').click(()=> {
+$('save').click(()=> {
     e = false
     let first = document.getElementById("first").value;
     let last = document.getElementById("last").value;
@@ -108,19 +104,19 @@ db.collection('users').orderBy("Name").onSnapshot(doc =>{
     let table = $('.ccc')[0]
     
     // document.querySelectorAll("tbody tr").forEach(item => item.remove())
-    $(".ccc tr").remove()
+    $("tbody tr").remove()
     doc.forEach(item => { 
         let row = table.insertRow(-1)
         let firstCell = row.insertCell(0)
         let secoundCell = row.insertCell(1)
         let thirdCell = row.insertCell(2)
         let str = String(item.data().Email)
-        let buff = ""
+        let mail = ""
         
         for(i=0;i<str.length;i++){
             if(i==0|| str[i]=='@'|| str[i]=='.'){
-                buff += str[i]
-            }else buff +='x'
+                mail += str[i]
+            }else mail +='x'
         }
         firstCell.textContent = item.data().Name
         if(item.data().Gender == 1){
@@ -136,11 +132,15 @@ db.collection('users').orderBy("Name").onSnapshot(doc =>{
             o++;
             count++;
         }
-        thirdCell.textContent = buff
+        thirdCell.textContent = mail
+
         let options = {
             title: {
                 text: "Users Gender "
             },
+            subtitles: [{
+                text: "As of February, 2020"
+            }],
             
             animationEnabled: true,
             data: [{
@@ -156,11 +156,11 @@ db.collection('users').orderBy("Name").onSnapshot(doc =>{
                     { y: (f/count)*100, label: "Female" },
                     { y: (o/count)*100, label: "Other" },
                    
+                   
                 ]  
             }]
         };
         $("#chartContainer").CanvasJSChart(options);
-        console.log(m)
     })
     //$('.textchange').text(secoundCell)
 })
